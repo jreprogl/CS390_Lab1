@@ -15,12 +15,12 @@ tf.random.set_seed(1618)
 #tf.logging.set_verbosity(tf.logging.ERROR)   # Uncomment for TF1.
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-ALGORITHM = "guesser"
+#ALGORITHM = "guesser"
 #ALGORITHM = "tf_net"
-#ALGORITHM = "tf_conv"
+ALGORITHM = "tf_conv"
 
-DATASET = "mnist_d"
-#DATASET = "mnist_f"
+#DATASET = "mnist_d"
+DATASET = "mnist_f"
 #DATASET = "cifar_10"
 #DATASET = "cifar_100_f"
 #DATASET = "cifar_100_c"
@@ -62,8 +62,22 @@ def buildTFNeuralNet(x, y, eps = 6):
 
 
 def buildTFConvNet(x, y, eps = 10, dropout = True, dropRate = 0.2):
-    pass        #TODO: Implement a CNN here. dropout option is required.
-    return None
+    #TODO: Implement a CNN here. dropout option is required.
+    model = keras.Sequential()
+    inShape = (IH, IW, IZ)
+    lossType = keras.losses.categorical_crossentropy
+    opt = tf.keras.optimizers.Adam()
+    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
+    model.add(keras.layers.Conv2D(64, kernel_size = (3, 3), activation = "relu"))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.Flatten())
+    if (dropout):
+        model.add(keras.layers.Dropout(dropRate)) #https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+    model.add(keras.layers.Dense(128, activation = "relu"))
+    model.add(keras.layers.Dense(NUM_CLASSES, activation = "softmax"))
+    model.compile(optimizer = opt, loss = lossType)
+    model.fit(x, y, epochs = eps)
+    return model
 
 #=========================<Pipeline Functions>==================================
 

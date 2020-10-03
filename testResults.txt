@@ -1,0 +1,2 @@
+Standard CNN, MNIST_D (from slides, with dropout): 98.73
+
