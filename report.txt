@@ -1,0 +1,52 @@
+Name: Joshua Reprogle
+Email: jreprogl@purdue.edu
+Git Repo Link: https://github.com/jreprogl/CS390_Lab1
+
+Questions to Answer:
+	1. A CNN is superior over an ANN because a CNN is capable of (in a way) pre processing the image through convolution before it gets
+		to the hidden layers. The pooling that follows is able to further process the image data and remove information that may
+		not be relevant to what we are trying to achieve. Once the convolution layers and the pooling is done, the CNN procedes just like
+		a normal ANN. A CNN is essectially an ANN with more preprocessing.
+	2. We sometimes use pooling in a CNN in order to remove information that is not helpful. This way, the ANN part of the CNN can focus on what's really
+		important and ignore what we do not care about as much.
+	3. I believe the main reason the cifar datasets are harder than mnist is because of the additional classes as well as the complexity of those classes.
+		With MNSIT, both versions have only so many different ways they can be represented whereas the cifar dataset can be more complicated. I do not
+		believe it is because of the RGB aspect because I was able to run my CNN without facotring the x3 for RGB into the image size and I was still able
+		to get a rather similar result. Due to how many classes are in the cifar datasets, I can easily see several boats getting confused with planes or cars, or a rocket with a train.
+
+Resources Used:
+	keras.io
+		Viewed other alternatives to Adam() as well as syntax for SGD (since it was a piazza suggestion).
+	https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+		Helped determine dropRate syntax
+	Lecture Slides
+		Review of lecture slides 5 got me to modify the keras code (from slides) to include more Pooling lines after some of the Conv2D layers
+Parts of the lab completed:
+	Added ANN
+	Implemented CNN
+	MNIST Digit Accuracy of 99.04%
+	MNIST Fashion Accuracy of 92.12%
+	Cifar 10 Accuracy of 72.95%
+	EC: Cifar 100 Fine Accuracy of 40.32%
+	Cifar 100 Coarse Accuracy of 51.95%
+	Pipeline for cifar-10, cifar-100 fine, and cifar-100 coarse use
+	Plots for ANN and CNN accruacy
+
+CNN Accuracy:
+	One of the main way that I increased the accuracy of my CNN was by adding pooling layers after each Conv2D layer. Another 
+	way I increased the accuracy was by preprocessing the data in the same way that we did in Lab0: by dividing the xTran/xTest
+	by 255. Without the preprocessing, the cifar_100_f would be around 25% accuracy. Use of mainly relu and ending with a softmax
+	seemed to be one of the better ways to go about using activation functions. Sometimes adjusting the dropRate and/or epochs resulted
+	in fairly decent improvments, and other times it didn't do too much.
+
+Hyperparameters:
+	Epochs: 10-20 (6 for ANN)
+	Drop Rate: 0.30 - 0.40
+	Loss Type: Categorical Crossentropy
+	Optimizer: Adam
+	Activation Functions: Relu, softmax, sigmoid (ANN)
+	Number of layers: Average of about 7 (including Pooling and Conv2D)
+	ANN Batch Size: 100
+
+Plots are below as well as in separate PDF files:
+
