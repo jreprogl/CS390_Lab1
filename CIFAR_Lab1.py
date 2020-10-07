@@ -70,7 +70,7 @@ def buildTFNeuralNet(x, y, eps = 6):
     return None
 
 
-def buildTFConvNet(x, y, eps = 20, dropout = True, dropRate = 0.24):
+def buildTFConvNet(x, y, eps = 20, dropout = True, dropRate = 0.3):
     #TODO: Implement a CNN here. dropout option is required.
     model = keras.Sequential()
     inShape = (IH, IW, IZ)
@@ -78,9 +78,10 @@ def buildTFConvNet(x, y, eps = 20, dropout = True, dropRate = 0.24):
     opt = tf.keras.optimizers.Adam()
     model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
     model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
-    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
-    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
     model.add(keras.layers.Conv2D(64, kernel_size = (3, 3), activation = "relu"))
+    if (dropout):
+        model.add(keras.layers.Dropout(dropRate)) #https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
     model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(256, activation = "relu"))

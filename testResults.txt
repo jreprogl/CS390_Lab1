@@ -1,13 +1,30 @@
 Completed versions are in WorkingFiles directory
 
 In Lab1.py
-Standard CNN, MNIST_D: 99.02
+Standard CNN, MNIST_D: 99.04
 	from slides
 	with dropout
 	has x2 32 layers, x2 64 layers, and x2 128 layers
 	softmax, softmax relu, relu, rleu, relu, softmax
-Standard CNN, MNIST_F: 91.61
+Standard CNN, MNIST_F: 92.12
 	from slides
 	with dropout
 	added another 64 layer
 	softmax, relu, relu, relu, softmax
+
+
+
+CNN
+MNIST_D: 99.04
+MNIST_F: 92.12
+Cifar_10: 72.95
+Cifar_100_F: 40.32
+Cifar_100_C: 51.95
+
+ANN
+MNIST_D: 98.13
+MNIST_F: 88.04
+Cifar_10: 10.00 
+Cifar_100_F: 1.00
+Cifar_100_C: 5.00
+ 

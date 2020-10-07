@@ -16,8 +16,8 @@ tf.random.set_seed(1618)
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 #ALGORITHM = "guesser"
-#ALGORITHM = "tf_net"
-ALGORITHM = "tf_conv"
+ALGORITHM = "tf_net"
+#ALGORITHM = "tf_conv"
 
 #DATASET = "mnist_d"
 DATASET = "mnist_f"
@@ -38,12 +38,23 @@ elif DATASET == "mnist_f":
     IZ = 1
     IS = 784
 elif DATASET == "cifar_10":
-    pass                                 # TODO: Add this case.
+    NUM_CLASSES = 10
+    IH = 32
+    IW = 32
+    IZ = 3
+    IS = 3072
 elif DATASET == "cifar_100_f":
-    pass                                 # TODO: Add this case.
+    NUM_CLASSES = 100
+    IH = 32
+    IW = 32
+    IZ = 3
+    IS = 3072
 elif DATASET == "cifar_100_c":
-    pass                                 # TODO: Add this case.
-
+    NUM_CLASSES = 100
+    IH = 32
+    IW = 32
+    IZ = 3
+    IS = 3072
 
 #=========================<Classifier Functions>================================
 
@@ -57,12 +68,105 @@ def guesserClassifier(xTest):
 
 
 def buildTFNeuralNet(x, y, eps = 6):
-    pass        #TODO: Implement a standard ANN here.
-    return None
+    model = keras.Sequential()
+    lossType = keras.losses.categorical_crossentropy
+    opt = tf.keras.optimizers.Adam()
+    inputShape = (IS,)
+    model.add(keras.layers.Dense(IS, input_shape=inputShape, activation=tf.nn.relu))  #was 2 layer, relu then sigmoid, 100 batch, 100 eps
+    model.add(keras.layers.Dense(NUM_CLASSES, activation=tf.nn.sigmoid))
+    model.compile(optimizer = opt, loss = lossType)
+    if IS > 784:
+        shapeOne = 50000
+    else:
+        shapeOne = 60000
+    x = x.reshape(shapeOne, IS)
+    model.fit(x, y, epochs=eps, batch_size=100)
+    return model
 
 
-def buildTFConvNet(x, y, eps = 10, dropout = True, dropRate = 0.20):
-    #TODO: Implement a CNN here. dropout option is required.
+def build10ConvNet(x, y, eps = 10, dropout = True, dropRate = 0.3):
+    print("cifar_10_net")
+    model = keras.Sequential()
+    inShape = (IH, IW, IZ)
+    lossType = keras.losses.categorical_crossentropy
+    opt = tf.keras.optimizers.Adam()
+    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.Conv2D(64, kernel_size = (3, 3), activation = "relu"))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(256, activation = "relu"))
+    model.add(keras.layers.Dense(128, activation = "relu"))
+    if (dropout):
+        model.add(keras.layers.Dropout(dropRate)) #https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+    model.add(keras.layers.Dense(NUM_CLASSES, activation = "softmax")) #Default is softmax`
+    model.compile(optimizer = opt, loss = lossType)
+    model.fit(x, y, epochs = eps)
+    return model
+
+
+def build100FConvNet(x, y, eps = 20, dropout = True, dropRate = 0.3):
+    model = keras.Sequential()
+    inShape = (IH, IW, IZ)
+    lossType = keras.losses.categorical_crossentropy
+    opt = tf.keras.optimizers.Adam()
+    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.Conv2D(64, kernel_size = (3, 3), activation = "relu"))
+    if (dropout):
+        model.add(keras.layers.Dropout(dropRate)) #https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(256, activation = "relu"))
+    model.add(keras.layers.Dense(128, activation = "relu"))
+    if (dropout):
+        model.add(keras.layers.Dropout(dropRate)) #https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+    model.add(keras.layers.Dense(NUM_CLASSES, activation = "softmax")) #Default is softmax`
+    model.compile(optimizer = opt, loss = lossType)
+    model.fit(x, y, epochs = eps)
+    return model
+
+def build100CConvNet(x, y, eps = 10, dropout = True, dropRate = 0.3):
+    model = keras.Sequential()
+    inShape = (IH, IW, IZ)
+    lossType = keras.losses.categorical_crossentropy
+    opt = tf.keras.optimizers.Adam()
+    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.Conv2D(64, kernel_size = (3, 3), activation = "relu"))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(256, activation = "relu"))
+    model.add(keras.layers.Dense(128, activation = "relu"))
+    if (dropout):
+        model.add(keras.layers.Dropout(dropRate)) #https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+    model.add(keras.layers.Dense(NUM_CLASSES, activation = "softmax")) #Default is softmax`
+    model.compile(optimizer = opt, loss = lossType)
+    model.fit(x, y, epochs = eps)
+    return model
+
+def buildMNISTConvNet(x, y, eps = 20, dropout = True, dropRate = 0.40):
+    model = keras.Sequential()
+    inShape = (IH, IW, IZ)
+    lossType = keras.losses.categorical_crossentropy
+    opt = tf.keras.optimizers.Adam()
+    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
+    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
+    model.add(keras.layers.Conv2D(64, kernel_size = (3, 3), activation = "relu"))
+    model.add(keras.layers.Conv2D(64, kernel_size = (3, 3), activation = "relu"))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.Flatten())
+    if (dropout):
+        model.add(keras.layers.Dropout(dropRate)) #https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+    model.add(keras.layers.Dense(128, activation = "relu"))
+    model.add(keras.layers.Dense(128, activation = "relu"))
+    model.add(keras.layers.Dense(NUM_CLASSES, activation = "softmax")) #Default is softmax`
+    model.compile(optimizer = opt, loss = lossType)
+    model.fit(x, y, epochs = eps)
+    return model
     model = keras.Sequential()
     inShape = (IH, IW, IZ)
     lossType = keras.losses.categorical_crossentropy
@@ -82,6 +186,18 @@ def buildTFConvNet(x, y, eps = 10, dropout = True, dropRate = 0.20):
     model.fit(x, y, epochs = eps)
     return model
 
+
+def buildTFConvNet(x, y, eps = 20, dropout = True, dropRate = 0.40):
+    if (DATASET == 'mnist_d' or DATASET == 'mnist_f'):
+        return buildMNISTConvNet(x, y)
+    elif (DATASET == 'cifar_10'):
+        return build10ConvNet(x, y)
+    elif (DATASET == 'cifar_100_f'):
+        return build100FConvNet(x, y)
+    else:
+        return build100CConvNet(x, y)
+
+
 #=========================<Pipeline Functions>==================================
 
 def getRawData():
@@ -92,11 +208,14 @@ def getRawData():
         mnist = tf.keras.datasets.fashion_mnist
         (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
     elif DATASET == "cifar_10":
-        pass      # TODO: Add this case.
+        cifar_10 = tf.keras.datasets.cifar10
+        (xTrain, yTrain), (xTest, yTest) = cifar_10.load_data()
     elif DATASET == "cifar_100_f":
-        pass      # TODO: Add this case.
+        cifar_100_f = tf.keras.datasets.cifar100
+        (xTrain, yTrain), (xTest, yTest) = cifar_100_f.load_data(label_mode="fine")
     elif DATASET == "cifar_100_c":
-        pass      # TODO: Add this case.
+        cifar_100_c = tf.keras.datasets.cifar100
+        (xTrain, yTrain), (xTest, yTest) = cifar_100_c.load_data(label_mode="coarse")
     else:
         raise ValueError("Dataset not recognized.")
     print("Dataset: %s" % DATASET)
@@ -113,9 +232,13 @@ def preprocessData(raw):
     if ALGORITHM != "tf_conv":
         xTrainP = xTrain.reshape((xTrain.shape[0], IS))
         xTestP = xTest.reshape((xTest.shape[0], IS))
+        xTrainP = xTrainP / 255
+        xTestP = xTestP / 255
     else:
         xTrainP = xTrain.reshape((xTrain.shape[0], IH, IW, IZ))
         xTestP = xTest.reshape((xTest.shape[0], IH, IW, IZ))
+        xTrainP = xTrainP / 255
+        xTestP = xTestP / 255
     yTrainP = to_categorical(yTrain, NUM_CLASSES)
     yTestP = to_categorical(yTest, NUM_CLASSES)
     print("New shape of xTrain dataset: %s." % str(xTrainP.shape))

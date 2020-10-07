@@ -24,8 +24,8 @@ Resources Used:
 Parts of the lab completed:
 	Added ANN
 	Implemented CNN
-	MNIST Digit Accuracy of 99.04%
-	MNIST Fashion Accuracy of 92.12%
+	MNIST Digit Accuracy of 99.18%
+	MNIST Fashion Accuracy of 92.5%
 	Cifar 10 Accuracy of 72.95%
 	EC: Cifar 100 Fine Accuracy of 40.32%
 	Cifar 100 Coarse Accuracy of 51.95%
