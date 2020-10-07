@@ -1,2 +1,13 @@
-Standard CNN, MNIST_D (from slides, with dropout): 98.73
+Completed versions are in WorkingFiles directory
 
+In Lab1.py
+Standard CNN, MNIST_D: 99.02
+	from slides
+	with dropout
+	has x2 32 layers, x2 64 layers, and x2 128 layers
+	softmax, softmax relu, relu, rleu, relu, softmax
+Standard CNN, MNIST_F: 91.61
+	from slides
+	with dropout
+	added another 64 layer
+	softmax, relu, relu, relu, softmax

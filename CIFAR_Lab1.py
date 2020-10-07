@@ -20,9 +20,9 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 ALGORITHM = "tf_conv"
 
 #DATASET = "mnist_d"
-DATASET = "mnist_f"
+#DATASET = "mnist_f"
 #DATASET = "cifar_10"
-#DATASET = "cifar_100_f"
+DATASET = "cifar_100_f"
 #DATASET = "cifar_100_c"
 
 if DATASET == "mnist_d":
@@ -38,8 +38,17 @@ elif DATASET == "mnist_f":
     IZ = 1
     IS = 784
 elif DATASET == "cifar_10":
-    pass                                 # TODO: Add this case.
+    NUM_CLASSES = 10
+    IH = 32
+    IW = 32
+    IZ = 3
+    IS = 1024
 elif DATASET == "cifar_100_f":
+    NUM_CLASSES = 100
+    IH = 32
+    IW = 32
+    IZ = 3
+    IS = 3072
     pass                                 # TODO: Add this case.
 elif DATASET == "cifar_100_c":
     pass                                 # TODO: Add this case.
@@ -61,22 +70,23 @@ def buildTFNeuralNet(x, y, eps = 6):
     return None
 
 
-def buildTFConvNet(x, y, eps = 10, dropout = True, dropRate = 0.20):
+def buildTFConvNet(x, y, eps = 20, dropout = True, dropRate = 0.24):
     #TODO: Implement a CNN here. dropout option is required.
     model = keras.Sequential()
     inShape = (IH, IW, IZ)
     lossType = keras.losses.categorical_crossentropy
     opt = tf.keras.optimizers.Adam()
-    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "softmax", input_shape = inShape))
-    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "softmax"))
-    model.add(keras.layers.Conv2D(64, kernel_size = (3, 3), activation = "relu"))
+    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(keras.layers.Conv2D(32, kernel_size = (3, 3), activation = "relu", input_shape = inShape))
+    model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
     model.add(keras.layers.Conv2D(64, kernel_size = (3, 3), activation = "relu"))
     model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
     model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(256, activation = "relu"))
+    model.add(keras.layers.Dense(128, activation = "relu"))
     if (dropout):
         model.add(keras.layers.Dropout(dropRate)) #https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
-    model.add(keras.layers.Dense(128, activation = "relu"))
-    model.add(keras.layers.Dense(128, activation = "relu"))
     model.add(keras.layers.Dense(NUM_CLASSES, activation = "softmax")) #Default is softmax`
     model.compile(optimizer = opt, loss = lossType)
     model.fit(x, y, epochs = eps)
@@ -92,11 +102,14 @@ def getRawData():
         mnist = tf.keras.datasets.fashion_mnist
         (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
     elif DATASET == "cifar_10":
-        pass      # TODO: Add this case.
+        cifar_10 = tf.keras.datasets.cifar10
+        (xTrain, yTrain), (xTest, yTest) = cifar_10.load_data()
     elif DATASET == "cifar_100_f":
-        pass      # TODO: Add this case.
+        cifar_100_f = tf.keras.datasets.cifar100
+        (xTrain, yTrain), (xTest, yTest) = cifar_100_f.load_data(label_mode="fine")
     elif DATASET == "cifar_100_c":
-        pass      # TODO: Add this case.
+        cifar_100_c = tf.keras.datasets.cifar100
+        (xTrain, yTrain), (xTest, yTest) = cifar_100_c.load_data(label_mode="course")
     else:
         raise ValueError("Dataset not recognized.")
     print("Dataset: %s" % DATASET)
@@ -116,6 +129,8 @@ def preprocessData(raw):
     else:
         xTrainP = xTrain.reshape((xTrain.shape[0], IH, IW, IZ))
         xTestP = xTest.reshape((xTest.shape[0], IH, IW, IZ))
+        xTrainP = xTrainP / 255
+        xTestP = xTestP / 255
     yTrainP = to_categorical(yTrain, NUM_CLASSES)
     yTestP = to_categorical(yTest, NUM_CLASSES)
     print("New shape of xTrain dataset: %s." % str(xTrainP.shape))
